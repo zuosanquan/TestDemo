@@ -10,6 +10,6 @@
 
 @interface UIImage (Utils)
 
-+ (instancetype) originalImageNamed:(nonnull NSString *) imageName;
++ (instancetype) originalImageNamed:( NSString * _Nonnull ) imageName;
 
 @end

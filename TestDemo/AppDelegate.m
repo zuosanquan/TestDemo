@@ -8,8 +8,14 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
+#import "MineOwnPhotoFirstController.h"
+#import "DAOHelper.h"
 
-@interface AppDelegate ()
+static NSString * localSaveStr = @"localphoto";
+
+@interface AppDelegate ()<UITabBarControllerDelegate>
+
+@property(nonatomic, strong) ALAssetsLibrary * lib;
 
 @end
 
@@ -20,7 +26,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+   
     MainViewController * mainVc = [MainViewController new];
+    mainVc.selectedIndex = 0;
+    mainVc.delegate = self;
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.rootViewController = mainVc;
     self.window.backgroundColor = [UIColor whiteColor];
@@ -28,6 +37,36 @@
     return true;
    
 }
+
+
+#pragma mark -- Tabbar Delegate
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UINavigationController *)viewController
+{
+    NSMutableArray * array = [[[DAOHelper sharedHelper] loadCollected] copy];
+    UIViewController * mineVc = [viewController viewControllers][0];
+    if ([mineVc isKindOfClass:[MineOwnPhotoFirstController class]])
+    {
+        _lib = [[ALAssetsLibrary alloc] init];
+        __block NSMutableArray<ALAsset *> * group = [NSMutableArray array];
+        [array enumerateObjectsUsingBlock:^(NSURL * _Nonnull url, NSUInteger idx, BOOL * _Nonnull stop) {
+            [_lib assetForURL:url resultBlock:^(ALAsset *asset)
+            {
+                [group addObject:asset];
+                if ((array.count-1) == idx)
+                {
+                    ((MineOwnPhotoFirstController*)mineVc).assetArr = group;
+                    ((MineOwnPhotoFirstController*)mineVc).fromSystem = true;
+                }
+            } failureBlock:^(NSError *error) {
+                NSLog(@"图片查找失败");
+            }];
+            
+        }];
+        
+    }
+}
+
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

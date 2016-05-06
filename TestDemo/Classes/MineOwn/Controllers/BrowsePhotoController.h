@@ -14,5 +14,6 @@
 /** 接收过来的图片 **/
 @property(nonatomic, assign) NSInteger                 currentIndex;
 @property(nonatomic, strong) ALAssetsGroup             * group;
+@property(nonatomic, strong) NSMutableArray<ALAsset *> * assetArr;
 
 @end

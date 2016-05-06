@@ -13,6 +13,7 @@
 		A413F4B31CDB1AAB00A9F443 /* PhotoModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A413F4B21CDB1AAB00A9F443 /* PhotoModel.m */; };
 		A413F4B91CDB26B800A9F443 /* BrowsePhotoController.m in Sources */ = {isa = PBXBuildFile; fileRef = A413F4B81CDB26B800A9F443 /* BrowsePhotoController.m */; };
 		A413F4BC1CDC319E00A9F443 /* ZSGPhotoBrowseController.m in Sources */ = {isa = PBXBuildFile; fileRef = A413F4BB1CDC319E00A9F443 /* ZSGPhotoBrowseController.m */; };
+		A413F4BF1CDC978300A9F443 /* DAOHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A413F4BE1CDC978300A9F443 /* DAOHelper.m */; };
 		A445F2D81CD86BAC008F69F1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A445F2D71CD86BAC008F69F1 /* main.m */; };
 		A445F2DB1CD86BAC008F69F1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A445F2DA1CD86BAC008F69F1 /* AppDelegate.m */; };
 		A445F2E41CD86BAC008F69F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A445F2E21CD86BAC008F69F1 /* Main.storyboard */; };
@@ -61,6 +62,8 @@
 		A413F4B81CDB26B800A9F443 /* BrowsePhotoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowsePhotoController.m; sourceTree = "<group>"; };
 		A413F4BA1CDC319E00A9F443 /* ZSGPhotoBrowseController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSGPhotoBrowseController.h; sourceTree = "<group>"; };
 		A413F4BB1CDC319E00A9F443 /* ZSGPhotoBrowseController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZSGPhotoBrowseController.m; sourceTree = "<group>"; };
+		A413F4BD1CDC978300A9F443 /* DAOHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DAOHelper.h; sourceTree = "<group>"; };
+		A413F4BE1CDC978300A9F443 /* DAOHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DAOHelper.m; sourceTree = "<group>"; };
 		A445F2D31CD86BAC008F69F1 /* TestDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A445F2D71CD86BAC008F69F1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A445F2D91CD86BAC008F69F1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -369,6 +372,8 @@
 		A445F3301CD9DB30008F69F1 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				A413F4BD1CDC978300A9F443 /* DAOHelper.h */,
+				A413F4BE1CDC978300A9F443 /* DAOHelper.m */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -452,6 +457,7 @@
 				TargetAttributes = {
 					A445F2D21CD86BAC008F69F1 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = BY6LECFZEY;
 					};
 					A445F2EE1CD86BAC008F69F1 = {
 						CreatedOnToolsVersion = 7.3;
@@ -570,6 +576,7 @@
 			files = (
 				A445F2DB1CD86BAC008F69F1 /* AppDelegate.m in Sources */,
 				A413F4BC1CDC319E00A9F443 /* ZSGPhotoBrowseController.m in Sources */,
+				A413F4BF1CDC978300A9F443 /* DAOHelper.m in Sources */,
 				A445F35B1CDA4C45008F69F1 /* PhotoListViewController.m in Sources */,
 				A413F4B01CDAF7B200A9F443 /* AbbrevPhotoCell.m in Sources */,
 				A445F3461CD9DCAD008F69F1 /* SystemPhotosFirstController.m in Sources */,
@@ -723,6 +730,7 @@
 			baseConfigurationReference = A26CD251FFD97CCD151C0C0D /* Pods-TestDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: 1451854091@qq.com (4TPMF27XMP)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/TestDemo/PrefixHeader.pch";
@@ -731,6 +739,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.camera360.TestDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -740,6 +749,7 @@
 			baseConfigurationReference = B5A304B881120D7B7F2562EB /* Pods-TestDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer: 1451854091@qq.com (4TPMF27XMP)";
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/TestDemo/PrefixHeader.pch";
@@ -748,6 +758,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.camera360.TestDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

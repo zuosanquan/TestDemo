@@ -118,7 +118,13 @@ const static NSInteger defaultImageCount = 3;
         _centerImageView.image = image;
         //给中间图片添加点击事件， 双击放大
         UITapGestureRecognizer * doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(scaleImage:)];
+        doubleTap.numberOfTapsRequired = 2;
         [_centerScorllView addGestureRecognizer:doubleTap];
+        //单击还原
+        UITapGestureRecognizer * singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(restoreImage:)];
+        [_centerScorllView addGestureRecognizer:singleTap];
+        //解决单击冲突
+        [singleTap requireGestureRecognizerToFail:doubleTap];
     }
     return _centerImageView;
 }
@@ -164,7 +170,18 @@ const static NSInteger defaultImageCount = 3;
         if (result && [[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto])
             [self.assets addObject:result];
     }];
-    
+}
+
+-(void)setAssetArr:(NSMutableArray<ALAsset *> *)assetArr
+{
+    _assetArr = assetArr;
+    //解析图片数据
+    _imageCount = _assetArr.count;
+    [_assetArr enumerateObjectsUsingBlock:^(ALAsset * _Nonnull asset, NSUInteger idx, BOOL * _Nonnull stop)
+    {
+         if (asset && [[asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto])
+             [self.assets addObject:asset];
+     }];
 }
 
 #pragma Mark -- 辅助方法， 获取asset中图片等
@@ -200,9 +217,10 @@ const static NSInteger defaultImageCount = 3;
 //        如果偏移量较小， 不需要改变图片偏移
         if (scrollView.contentOffset.x == kScreenWidth)
             return;
+        [self.centerScorllView setZoomScale:1.0];
         [self reloadImage];
         [self.scrollView setContentOffset:CGPointMake(kScreenWidth, 0) animated:false];
-        [self.centerScorllView setZoomScale:1.0];
+        
     }
 }
 
@@ -248,6 +266,11 @@ const static NSInteger defaultImageCount = 3;
     float newScale = [(UIScrollView *)sender.view.superview zoomScale] * 1.5;
     CGRect zoomRect = [self zoomRectForScale:newScale inView:_centerScorllView withCenter:[sender locationInView:sender.view]];
     [_centerScorllView zoomToRect:zoomRect animated:YES];
+}
+
+- (void)restoreImage:(UITapGestureRecognizer *) sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (CGRect)zoomRectForScale:(float)scale inView:(UIScrollView *) scrollView withCenter:(CGPoint)center

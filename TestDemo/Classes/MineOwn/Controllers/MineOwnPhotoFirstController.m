@@ -10,6 +10,7 @@
 #import "BrowsePhotoController.h"
 #import "AbbrevPhotoCell.h"
 #import "PhotoModel.h"
+#import "DAOHelper.h"
 
 static NSString * kCollectCellIdentifier = @"kCollectCellIdentifier";
 
@@ -37,7 +38,7 @@ static CGFloat       itemSizeWidth       = 100.0;
 
 @implementation MineOwnPhotoFirstController
 
-#pragma Mark -- 懒加载
+#pragma mark -- 懒加载
 - (NSMutableArray<PhotoModel *> *)imageDatas
 {
     if (!_imageDatas) {
@@ -58,10 +59,6 @@ static CGFloat       itemSizeWidth       = 100.0;
 {
     if (!_flowLayout) {
         _flowLayout = [[UICollectionViewFlowLayout alloc] init];
-        /** 此处配置layout的属性
-         ...
-         ...
-         **/
     }
     return _flowLayout;
 }
@@ -90,7 +87,7 @@ static CGFloat       itemSizeWidth       = 100.0;
 }
 
 
-#pragma  Mark -- 布局工作
+#pragma  mark -- 布局工作
 - (void) initialData
 {
     self.itemsPerLine = itemPerLine;
@@ -104,23 +101,6 @@ static CGFloat       itemSizeWidth       = 100.0;
 //    配置navigationbar
     UIBarButtonItem * editItem = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStylePlain target:self action:@selector(editPhotos:)];
     self.navigationItem.rightBarButtonItem = editItem;
-}
-
-- (void) editPhotos:(UIBarButtonItem *) sender
-{
-    self.isEditing = !_isEditing;
-    if (!_isEditing) //如果点击了导出按钮， 需要清空已选
-    {
-        [self.selectedPhotos enumerateObjectsUsingBlock:^(NSIndexPath * _Nonnull indexPath, NSUInteger idx, BOOL * _Nonnull stop)
-        {
-            AbbrevPhotoCell * cell = (AbbrevPhotoCell *)[self.collectView cellForItemAtIndexPath:indexPath];
-            cell.isSelected = !cell.isSelected;
-            
-        }];
-        /** 在这里做导出操作 **/
-        [self.selectedPhotos removeAllObjects];
-    }
-    
 }
 
 - (void) initialEvent
@@ -163,10 +143,15 @@ static CGFloat       itemSizeWidth       = 100.0;
     [self initialEvent];
 //    设置初始数据, 必须在初始了事件之后才有观察效果
     [self initialData];
-    
-    
+
+    // Do any additional setup after loading the view.
+}
+
+
+- (void)setGroup:(ALAssetsGroup *)group
+{
+    _group = group;
     [_group enumerateAssetsWithOptions:NSEnumerationReverse usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-        
         if (result)
         {
             if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto])
@@ -180,20 +165,37 @@ static CGFloat       itemSizeWidth       = 100.0;
         else
         {
             //遍历相片或视频完毕， 可以展示资源
-            NSLog(@"%ld", self.imageDatas.count);
             [self.collectView reloadData];
             
         }
         
     }];
-
-    // Do any additional setup after loading the view.
 }
 
+-(void)setAssetArr:(NSMutableArray<ALAsset *> *)assetArr
+{
+    _assetArr = assetArr;
+    [_assetArr enumerateObjectsUsingBlock:^(ALAsset * _Nonnull result, NSUInteger idx, BOOL * _Nonnull stop)
+    {
+        if (result)
+        {
+            if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto])
+            {
+                PhotoModel * model = [PhotoModel new];
+                model.photo = result;
+                model.isSelected = false;
+                [self.imageDatas addObject:model];
+            }
+        }
+        if ((idx + 1) == _assetArr.count)
+        {
+            //遍历相片或视频完毕， 可以展示资源
+            [self.collectView reloadData];
+        }
+    }];
+}
 
-
-
-#pragma Mark -- CollectionView Delegate && DataSource
+#pragma mark - CollectionView Delegate && DataSource
 
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -253,6 +255,8 @@ static CGFloat       itemSizeWidth       = 100.0;
             //添加到已选数组中
             [self.selectedPhotos addObject:indexPath];
         }
+        else//如果取消，则删除掉
+            [self.selectedPhotos removeObject:indexPath];
     }
     else // 查看完整图片
     {
@@ -269,7 +273,7 @@ static CGFloat       itemSizeWidth       = 100.0;
 }
 
 
-#pragma Mark  -- Event handle, 事件处理
+#pragma mark  -- KVO事件处理
 /** 监听自己的itemsPerline属性， 动态确定每行显示的图片个数 **/
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
@@ -281,34 +285,38 @@ static CGFloat       itemSizeWidth       = 100.0;
         //刷新视图
         [self.collectView reloadData];
     }
-    else
-    {
-//        解析group中的值
-        //获取相册中的资源
-        [self.imageDatas removeAllObjects];
-        [_group enumerateAssetsWithOptions:NSEnumerationReverse usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                
-                if (result)
-                {
-                    if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto])
-                    {
-                        PhotoModel * model = [PhotoModel new];
-                        model.photo = result;
-                        model.isSelected = false;
-                        [self.imageDatas addObject:model];
-                    }
-                }
-                else
-                {
-                    //遍历相片或视频完毕， 可以展示资源
-                    [self.collectView reloadData];
-                    
-                }
-                
-        }];
-    }
-
 }
+
+
+#pragma  mark -- 按钮事件
+- (void) editPhotos:(UIBarButtonItem *) sender
+{
+    self.isEditing = !_isEditing;
+    if (!_isEditing) //如果点击了导出按钮， 需要清空已选
+    {
+        [self.selectedPhotos enumerateObjectsUsingBlock:^(NSIndexPath * _Nonnull indexPath, NSUInteger idx, BOOL * _Nonnull stop)
+         {
+             AbbrevPhotoCell * cell = (AbbrevPhotoCell *)[self.collectView cellForItemAtIndexPath:indexPath];
+             cell.isSelected = !cell.isSelected;
+             
+         }];
+        /** 异步将图片导出到本地 **/
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            将图片的URL存储起来，保存到本地
+            [weakSelf.selectedPhotos enumerateObjectsUsingBlock:^(NSIndexPath * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                PhotoModel * model = self.imageDatas[obj.row];
+                ALAssetRepresentation * rep = [model.photo defaultRepresentation];
+                [[DAOHelper sharedHelper] addToCollect:rep.url];
+            }];
+            [weakSelf.selectedPhotos removeAllObjects];
+        });
+        
+    }
+    
+}
+
+
 
 - (void)dealloc
 {

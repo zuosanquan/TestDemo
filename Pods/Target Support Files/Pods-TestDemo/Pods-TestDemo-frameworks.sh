@@ -52,11 +52,13 @@ code_sign_if_enabled() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework 'Pods-TestDemo/FMDB.framework'
   install_framework 'Pods-TestDemo/PureLayout.framework'
   install_framework 'Pods-TestDemo/ReactiveCocoa.framework'
   install_framework 'Pods-TestDemo/Result.framework'
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework 'Pods-TestDemo/FMDB.framework'
   install_framework 'Pods-TestDemo/PureLayout.framework'
   install_framework 'Pods-TestDemo/ReactiveCocoa.framework'
   install_framework 'Pods-TestDemo/Result.framework'

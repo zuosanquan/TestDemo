@@ -7,7 +7,7 @@ target 'TestDemo' do
 
 pod 'PureLayout'
 pod 'ReactiveCocoa'
-
+pod 'FMDB'
 end
 
 target 'TestDemoTests' do
